@@ -1,0 +1,22 @@
+{
+  "name": "textilehub-erode",
+  "version": "1.0.0",
+  "description": "Erode Textile & Garment Digital Catalog, WhatsApp Ordering & Stitching Job Work Progress Tracker",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mysql2": "^3.9.7",
+    "pg": "^8.11.5",
+    "uuid": "^9.0.1"
+  }
+}

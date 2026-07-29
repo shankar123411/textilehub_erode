@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Dashboard - TextileHub Erode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #1e293b;
+            --border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --brand: #0284c7;
+            --gold: #f59e0b;
+            --success: #10b981;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px; }
+
+        .header { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 1.1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .logo { font-size: 1.3rem; font-weight: 800; color: #38bdf8; text-decoration: none; }
+        .logo span { color: var(--gold); }
+
+        .container { max-width: 1240px; margin: 2rem auto; padding: 0 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
+
+        /* STATS CARDS GRID */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+        .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .stat-title { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .stat-val { font-size: 2.2rem; font-weight: 800; color: white; }
+
+        /* TWO COLUMN SECTION */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 880px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .card-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; display: flex; flex-direction: column; gap: 1.25rem; }
+        .card-header { font-size: 1.15rem; font-weight: 800; color: white; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-group label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+        .form-input { padding: 0.65rem 0.85rem; border: 1px solid var(--border); border-radius: 8px; background: #0f172a; color: white; font-size: 0.9rem; }
+        .form-input:focus { outline: none; border-color: var(--brand); }
+
+        .btn-action { background: var(--brand); color: white; border: none; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; text-align: center; }
+        .btn-action:hover { background: #0369a1; }
+
+        /* TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: #0f172a; padding: 0.75rem 1rem; text-align: left; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: white; }
+
+        .tag-status { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .tag-status.inward_received { background: #7c2d12; color: #ffedd5; }
+        .tag-status.cutting, .tag-status.stitching { background: #1e3a8a; color: #dbeafe; }
+        .tag-status.quality_check, .tag-status.packing { background: #854d0e; color: #fef08a; }
+        .tag-status.dispatched { background: #14532d; color: #dcfce7; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="/" class="logo">🧶 TextileHub <span>Erode</span></a>
+        <div style="display:flex; gap:1rem; align-items:center;">
+            <a href="/" style="color:#38bdf8; font-weight:700; text-decoration:none; font-size:0.85rem;">🌐 View Public Catalog</a>
+            <a href="/admin/login" style="background:#dc2626; color:white; padding:0.4rem 1rem; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:700;">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- STATS OVERVIEW -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Catalog Designs / Fabrics</div>
+                <div class="stat-val" style="color:#38bdf8;"><%= stats.totalProducts %></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Active Stitching Jobs</div>
+                <div class="stat-val" style="color:var(--gold);"><%= stats.activeJobs %></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Dispatched Orders</div>
+                <div class="stat-val" style="color:var(--success);"><%= stats.dispatchedJobs %></div>
+            </div>
+        </div>
+
+        <!-- TWO COLUMN CREATION FORMS -->
+        <div class="grid-2">
+            <!-- FORM 1: ADD NEW PRODUCT / SAREE DESIGN -->
+            <div class="card-panel">
+                <div class="card-header">
+                    <span>👗 Add New Saree / Fabric Design</span>
+                </div>
+                <form id="addProductForm" style="display:flex; flex-direction:column; gap:0.85rem;">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="pName" class="form-input" placeholder="e.g. Kanchipuram Soft Silk Saree" required>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="pCategory" class="form-input" style="font-weight:700;">
+                                <option value="1">Silk & Soft Sarees</option>
+                                <option value="2">Linen & Cotton Shirtings</option>
+                                <option value="3">Tailoring & Stitching Work</option>
+                                <option value="4">Nighties & Home Textiles</option>
+                                <option value="5">Uniforms</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fabric Type</label>
+                            <input type="text" id="pFabric" class="form-input" placeholder="Soft Silk / Cotton" required>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div class="form-group">
+                            <label>Wholesale Price (₹)</label>
+                            <input type="number" step="0.01" id="pPrice" class="form-input" placeholder="1850.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Price Type</label>
+                            <select id="pPriceType" class="form-input" style="font-weight:700;">
+                                <option value="per_piece">per piece</option>
+                                <option value="per_meter">per meter</option>
+                                <option value="per_stitching">per stitching set</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Available Colors & GSM</label>
+                        <input type="text" id="pColors" class="form-input" placeholder="Maroon, Royal Blue, Green (80s Count)">
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="url" id="pImg" class="form-input" value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600">
+                    </div>
+                    <button type="submit" class="btn-action" style="margin-top:0.4rem;">Publish Design to Catalog</button>
+                </form>
+            </div>
+
+            <!-- FORM 2: ISSUE NEW STITCHING JOB WORK TICKET -->
+            <div class="card-panel">
+                <div class="card-header">
+                    <span>🧵 Issue Stitching Job Ticket</span>
+                </div>
+                <form id="addJobForm" style="display:flex; flex-direction:column; gap:0.85rem;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div class="form-group">
+                            <label>Client / Buyer Store Name</label>
+                            <input type="text" id="jClient" class="form-input" placeholder="Sri Krishna Garments (CBE)" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Client WhatsApp / Phone</label>
+                            <input type="tel" id="jPhone" class="form-input" placeholder="9842101234" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Garment & Work Type</label>
+                        <input type="text" id="jGarment" class="form-input" placeholder="500 Sets School Uniform Stitching" required>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                        <div class="form-group">
+                            <label>Quantity (Pcs / Sets)</label>
+                            <input type="number" id="jQty" class="form-input" value="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fabric Inward Length</label>
+                            <input type="text" id="jFabric" class="form-input" placeholder="1200 Meters Fabric">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated Delivery Date</label>
+                        <input type="date" id="jDelivery" class="form-input" required>
+                    </div>
+                    <button type="submit" class="btn-action" style="margin-top:0.4rem; background:var(--gold); color:#000;">Issue Job Ticket & Generate QR</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- STITCHING JOBS MANAGEMENT TABLE -->
+        <div class="card-panel">
+            <div class="card-header">
+                <span>✂️ Live Stitching & Garment Job Orders</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket #</th>
+                            <th>Client Name</th>
+                            <th>Garment / Stitching Details</th>
+                            <th>Inward Length</th>
+                            <th>Status</th>
+                            <th>Est. Delivery</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% jobs.forEach(function(job) { %>
+                            <tr>
+                                <td style="font-weight:800; color:#38bdf8;"><%= job.job_ticket_number %></td>
+                                <td><strong><%= job.client_name %></strong><br><small style="color:var(--text-muted);"><%= job.client_phone %></small></td>
+                                <td><%= job.quantity %> Pcs - <%= job.garment_type %></td>
+                                <td><%= job.fabric_inward_length || 'N/A' %></td>
+                                <td><span class="tag-status <%= job.status %>"><%= (job.status || 'pending').replace('_', ' ') %></span></td>
+                                <td style="color:var(--gold); font-weight:700;"><%= job.estimated_delivery || 'TBD' %></td>
+                                <td>
+                                    <div style="display:flex; gap:0.3rem;">
+                                        <% if(job.status === 'inward_received') { %>
+                                            <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'cutting')" style="background:#0284c7; color:white; border:none; padding:0.3rem 0.5rem; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.75rem;">Mark Cutting</button>
+                                        <% } else if(job.status === 'cutting') { %>
+                                            <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'stitching')" style="background:#0284c7; color:white; border:none; padding:0.3rem 0.5rem; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.75rem;">Mark Stitching</button>
+                                        <% } else if(job.status === 'stitching') { %>
+                                            <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'quality_check')" style="background:#f59e0b; color:black; border:none; padding:0.3rem 0.5rem; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.75rem;">Mark Quality Check</button>
+                                        <% } else if(job.status === 'quality_check' || job.status === 'packing') { %>
+                                            <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'dispatched')" style="background:#10b981; color:white; border:none; padding:0.3rem 0.5rem; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.75rem;">Mark Dispatched</button>
+                                        <% } else { %>
+                                            <span style="color:#10b981; font-weight:800; font-size:0.75rem;">Completed ✓</span>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const body = {
+                name: document.getElementById('pName').value,
+                category_id: document.getElementById('pCategory').value,
+                fabric_type: document.getElementById('pFabric').value,
+                price: document.getElementById('pPrice').value,
+                price_type: document.getElementById('pPriceType').value,
+                available_colors: document.getElementById('pColors').value,
+                image_url: document.getElementById('pImg').value
+            };
+
+            const res = await fetch('/api/v1/admin/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) throw new Error('Failed to add product');
+            alert('Product published to catalog!');
+            window.location.reload();
+        } catch (err) { alert(err.message); }
+    });
+
+    document.getElementById('addJobForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const body = {
+                client_name: document.getElementById('jClient').value,
+                client_phone: document.getElementById('jPhone').value,
+                garment_type: document.getElementById('jGarment').value,
+                quantity: document.getElementById('jQty').value,
+                fabric_inward_length: document.getElementById('jFabric').value,
+                estimated_delivery: document.getElementById('jDelivery').value
+            };
+
+            const res = await fetch('/api/v1/admin/jobs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error('Failed to create job');
+            alert(`Stitching Job Ticket Created: ${data.ticketNumber}`);
+            window.location.reload();
+        } catch (err) { alert(err.message); }
+    });
+
+    async function updateJobStatus(ticket, status) {
+        try {
+            await fetch(`/api/v1/admin/jobs/${ticket}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            window.location.reload();
+        } catch (err) { alert(err.message); }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextileHub Erode - Enterprise Textile & Garment Portal</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#08080a">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #08080a;
+            --panel: #121216;
+            --panel-card: #18181f;
+            --border: #26262e;
+            --border-gold: #d4af37;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --gold: #d4af37;
+            --gold-light: #f3c846;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --red-glow: rgba(220, 38, 38, 0.4);
+            --red-bg: #991b1b;
+            --red-bright: #ef4444;
+            --whatsapp: #25d366;
+            --radius: 16px;
+            --font-head: 'Oswald', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-body); }
+        body { background: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px; }
+
+        h1, h2, h3, h4, h5, .font-head { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* HEADER NAV */
+        .header { background: rgba(18, 18, 22, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 1.1rem 2.25rem; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .logo { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.6rem; text-decoration: none; letter-spacing: 1px; }
+        .logo span { color: var(--gold); }
+
+        .header-actions { display: flex; align-items: center; gap: 1rem; }
+
+        .nav-tabs { display: flex; gap: 0.4rem; background: #000000; padding: 0.3rem; border-radius: 999px; border: 1px solid var(--border); }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 0.5rem 1.1rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.25s ease; }
+        .tab-btn svg { width: 16px; height: 16px; fill: currentColor; }
+        .tab-btn:hover { color: var(--gold); }
+        .tab-btn.active { background: var(--gold); color: #000000; font-weight: 800; box-shadow: 0 4px 15px var(--gold-glow); }
+
+        .lang-btn { background: #18181f; color: var(--gold); border: 1px solid var(--gold); padding: 0.45rem 1rem; border-radius: 999px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+        .lang-btn:hover { background: var(--gold); color: black; }
+        .lang-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .pwa-banner { background: linear-gradient(90deg, #18181f, #121216); border-bottom: 1px solid var(--gold); padding: 0.65rem 1.5rem; display: none; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .btn-install { background: var(--gold); color: black; border: none; padding: 0.35rem 1rem; border-radius: 999px; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
+
+        /* VIEW CONTAINERS */
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
+        /* HERO & FILTER */
+        .hero { text-align: center; padding: 3rem 1.5rem 1.5rem; max-width: 850px; margin: 0 auto; }
+        .hero h1 { font-size: 2.7rem; font-weight: 700; color: #ffffff; line-height: 1.15; }
+        .hero h1 span { color: var(--gold); }
+        .hero p { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.6rem; }
+
+        .categories { display: flex; justify-content: center; gap: 0.6rem; overflow-x: auto; padding: 1rem 1.5rem; scrollbar-width: none; flex-wrap: wrap; }
+        .cat-chip { background: #121216; border: 1px solid var(--border); color: var(--text-muted); padding: 0.6rem 1.4rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .cat-chip:hover, .cat-chip.active { background: var(--gold); color: #000000; border-color: var(--gold); font-weight: 800; box-shadow: 0 4px 15px var(--gold-glow); }
+
+        /* PRODUCTS GRID */
+        .container { max-width: 1280px; margin: 1.5rem auto; padding: 0 1.5rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.75rem; }
+
+        .product-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s ease; }
+        .product-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.15); }
+
+        .card-img-wrap { position: relative; height: 230px; width: 100%; overflow: hidden; background: #000000; }
+        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .product-card:hover .card-img-wrap img { transform: scale(1.06); }
+
+        .badge-cat { position: absolute; top: 14px; left: 14px; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); border: 1px solid var(--gold); color: var(--gold); font-family: var(--font-head); font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; letter-spacing: 0.5px; }
+
+        .card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; flex: 1; justify-content: space-between; }
+        .product-title { font-size: 1.25rem; font-weight: 700; color: #ffffff; line-height: 1.25; }
+        .product-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; }
+
+        .specs-list { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.75rem; color: #d4d4d8; }
+        .spec-tag { background: #18181f; padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid var(--border); }
+
+        .price-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 0.85rem; margin-top: 0.5rem; }
+        .price-val { font-family: var(--font-head); font-size: 1.45rem; font-weight: 700; color: var(--gold); }
+        .price-type { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+        .btn-whatsapp { background: var(--gold); color: #000000; font-weight: 800; border: none; padding: 0.8rem 1.2rem; border-radius: 12px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; width: 100%; transition: all 0.2s; box-shadow: 0 4px 15px var(--gold-glow); }
+        .btn-whatsapp:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(243, 200, 70, 0.4); }
+
+        /* JOB TRACKER STYLES */
+        .search-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 1.25rem; max-width: 680px; margin: 2rem auto; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .search-input { flex: 1; padding: 0.85rem 1.1rem; border-radius: 12px; border: 1px solid var(--border); background: #000000; color: white; font-size: 1rem; font-weight: 700; text-transform: uppercase; }
+        .search-input:focus { outline: none; border-color: var(--gold); }
+
+        .pipeline { display: flex; justify-content: space-between; position: relative; margin: 2.5rem 0 1rem; }
+        .pipeline::before { content: ''; position: absolute; top: 18px; left: 10%; right: 10%; height: 3px; background: var(--border); z-index: 1; }
+        
+        .pipe-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; flex: 1; }
+        .pipe-dot { width: 40px; height: 40px; border-radius: 50%; background: #08080a; border: 2px solid var(--border); display: flex; justify-content: center; align-items: center; fill: var(--text-muted); transition: all 0.3s; }
+        .pipe-dot svg { width: 18px; height: 18px; }
+        .pipe-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-align: center; }
+
+        .pipe-step.done .pipe-dot { background: var(--gold); border-color: var(--gold); fill: #000000; box-shadow: 0 0 15px var(--gold-glow); }
+        .pipe-step.done .pipe-label { color: var(--gold); font-weight: 700; }
+
+        .pipe-step.active .pipe-dot { background: #ffffff; border-color: var(--gold); fill: #000000; box-shadow: 0 0 20px rgba(255,255,255,0.8); }
+        .pipe-step.active .pipe-label { color: #ffffff; font-weight: 800; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: #08080a; padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border); font-size: 0.85rem; }
+
+        /* ADMIN LOGIN MODAL BOX */
+        .login-box { background: var(--panel); border: 1px solid var(--gold); border-radius: var(--radius); padding: 2.5rem; width: 100%; max-width: 400px; margin: 3rem auto; display: flex; flex-direction: column; gap: 1.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+        .login-box h2 { font-size: 1.5rem; font-weight: 700; color: var(--gold); }
+
+        .password-wrap { position: relative; display: flex; align-items: center; }
+        .password-wrap input { width: 100%; padding-right: 2.8rem; }
+        .eye-btn { position: absolute; right: 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; }
+        .eye-btn:hover { color: var(--gold); }
+
+        /* ADMIN PANEL STYLES */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+        .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; }
+        .stat-val { font-family: var(--font-head); font-size: 2.2rem; font-weight: 700; color: var(--gold); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 880px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .card-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; display: flex; flex-direction: column; gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-group label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+        .form-input { padding: 0.7rem 0.9rem; border: 1px solid var(--border); border-radius: 8px; background: #000000; color: white; font-size: 0.9rem; }
+        .form-input:focus { outline: none; border-color: var(--gold); }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: #08080a; padding: 0.75rem 1rem; text-align: left; font-family: var(--font-head); font-weight: 700; color: var(--gold); border-bottom: 1px solid var(--border); letter-spacing: 0.5px; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: white; }
+
+        /* STATUS BADGES WITH RED GLOW FOR READY FOR DELIVERY */
+        .tag-status { display: inline-block; padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tag-status.inward_received { background: #3f3f46; color: #f4f4f5; }
+        .tag-status.cutting, .tag-status.stitching { background: #713f12; color: #fef08a; }
+        .tag-status.quality_check, .tag-status.packing { background: #854d0e; color: #fef9c3; }
+        .tag-status.dispatched { background: #dc2626; color: #ffffff; box-shadow: 0 0 15px var(--red-glow); font-weight: 800; border: 1px solid #ef4444; }
+
+        .lbl-dispatched-tag { color: #ef4444; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 200; padding: 1rem; }
+        .order-modal { background: var(--panel); border: 1px solid var(--gold); border-radius: 24px; padding: 2rem; width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 1.25rem; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+    </style>
+</head>
+<body>
+
+    <div class="pwa-banner" id="pwaBanner">
+        <span id="pwaBannerText">Install TextileHub App on Mobile Home Screen</span>
+        <button class="btn-install" id="installBtn">Install App</button>
+    </div>
+
+    <!-- MAIN HEADER NAV WITH DYNAMIC LANGUAGE TOGGLE -->
+    <div class="header">
+        <a href="#" class="logo" onclick="switchTab('catalogView')">
+            TEXTILEHUB <span id="logoCity">ERODE</span>
+        </a>
+
+        <div class="header-actions">
+            <!-- SVG LANGUAGE TOGGLE BUTTON (NO EMOJI) -->
+            <button class="lang-btn" onclick="toggleLanguage()" id="langBtn">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                <span id="txtLangLabel">Tamil (தமிழ்)</span>
+            </button>
+
+            <!-- TAB NAVIGATION WITH SVG SYMBOLS (NO EMOJIS) -->
+            <div class="nav-tabs">
+                <button class="tab-btn active" id="btnTabCatalog" onclick="switchTab('catalogView')">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h5v-2h-5v2zm0-4h5v-2h-5v2zm0-4h5V7h-5v2zM7 7h3v10H7V7z"/></svg>
+                    <span id="txtTabCatalog">Digital Catalog</span>
+                </button>
+                <button class="tab-btn" id="btnTabTrack" onclick="switchTab('trackerView')">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+                    <span id="txtTabTrack">Job Work Tracker</span>
+                </button>
+                <button class="tab-btn" id="btnTabAdmin" onclick="switchTab('adminView')">
+                    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8subscriptionz"/></svg>
+                    <span id="txtTabAdmin">Merchant Control</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 1: DIGITAL CATALOG VIEW -->
+    <div class="page-view active" id="catalogView">
+        <div class="hero">
+            <h1 id="heroTitle">TEXTILEHUB <span>ERODE</span></h1>
+            <p id="heroSubtitle">Erode Wholesale Soft Silk Sarees, Shirtings, Nighties & Custom Garment Stitching</p>
+        </div>
+
+        <div class="categories">
+            <button class="cat-chip active" id="catAll" onclick="filterCategory('all', this)">All Collections</button>
+            <button class="cat-chip" id="cat1" onclick="filterCategory(1, this)">Silk & Soft Sarees</button>
+            <button class="cat-chip" id="cat2" onclick="filterCategory(2, this)">Linen & Cotton Shirtings</button>
+            <button class="cat-chip" id="cat3" onclick="filterCategory(3, this)">Tailoring Job Work</button>
+            <button class="cat-chip" id="cat4" onclick="filterCategory(4, this)">Nighties & Home</button>
+            <button class="cat-chip" id="cat5" onclick="filterCategory(5, this)">Uniforms</button>
+        </div>
+
+        <div class="container">
+            <div class="products-grid" id="productsGrid">
+                <% products.forEach(function(item, idx) { %>
+                    <div class="product-card" data-cat="<%= item.category_id || 1 %>" data-id="<%= item.id %>">
+                        <div>
+                            <div class="card-img-wrap">
+                                <span class="badge-cat badge-cat-txt" data-en="<%= item.category_name || 'TEXTILE' %>"><%= item.category_name || 'TEXTILE' %></span>
+                                <img src="<%= item.image_url || 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600' %>" alt="<%= item.name %>" loading="lazy">
+                            </div>
+                            <div class="card-body">
+                                <div>
+                                    <h3 class="product-title card-p-title" data-en="<%= item.name %>"><%= item.name %></h3>
+                                    <p class="product-desc card-p-desc" data-en="<%= item.description %>"><%= item.description %></p>
+                                </div>
+                                
+                                <div class="specs-list">
+                                    <span class="spec-tag card-p-fabric" data-en="<%= item.fabric_type || 'Cotton' %>">Fabric: <%= item.fabric_type || 'Cotton' %></span>
+                                    <span class="spec-tag card-p-gsm" data-en="<%= item.gsm_count || '120 GSM' %>">Count: <%= item.gsm_count || '120 GSM' %></span>
+                                    <span class="spec-tag card-p-colors" data-en="<%= item.available_colors || 'Multiple' %>">Colors: <%= item.available_colors || 'Multiple' %></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 0 1.25rem 1.25rem;">
+                            <div class="price-row" style="margin-bottom:0.85rem;">
+                                <div>
+                                    <span class="price-val">₹<%= parseFloat(item.price).toFixed(2) %></span>
+                                    <span class="price-type card-p-price-type" data-en="<%= (item.price_type || 'piece').replace('_', ' ') %>">/ <%= (item.price_type || 'piece').replace('_', ' ') %></span>
+                                </div>
+                                <span style="font-size:0.75rem; color:var(--gold); font-weight:700;" class="card-p-code">Code: <%= item.code %></span>
+                            </div>
+
+                            <button class="btn-whatsapp btn-order-ws" onclick="openOrderModal('<%= item.name %>', '<%= item.code %>', '<%= item.price %>', '<%= merchant.whatsapp %>')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-0.999 3.648 3.742-0.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.572-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                <span class="ws-btn-text">Order via WhatsApp</span>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: JOB TRACKER VIEW -->
+    <div class="page-view" id="trackerView">
+        <div class="container">
+            <div class="search-card">
+                <h2 style="font-size:1.6rem; text-align:center; color:white;" id="trackTitle">STITCHING & GARMENT JOB TRACKER</h2>
+                <p style="color:var(--text-muted); font-size:0.85rem; text-align:center;" id="trackSub">Enter your Job Ticket Number to check live stitching & delivery progress</p>
+                
+                <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                    <input type="text" id="ticketInput" class="search-input" placeholder="e.g. JOB-88410" value="JOB-88410">
+                    <button class="btn-whatsapp" onclick="trackJob()" style="width:auto; padding:0 1.5rem;" id="btnCheckStatus">Check Status</button>
+                </div>
+                <div id="errorMsg" style="color:#fca5a5; font-size:0.85rem; text-align:center; display:none;"></div>
+            </div>
+
+            <div class="search-card" id="resultCard" style="display:none; max-width:800px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.4rem; color:var(--gold);" id="resTicketNo">JOB-88410</h3>
+                        <p style="font-size:0.85rem; color:var(--text-muted);" id="resClient">Sri Krishna Garments (CBE)</p>
+                    </div>
+                    <span id="resStatusBadge" style="background:var(--gold); color:black; padding:0.4rem 1rem; border-radius:999px; font-size:0.8rem; font-weight:800; text-transform:uppercase;">STITCHING</span>
+                </div>
+
+                <!-- SVG PIPELINE WITH PRODUCT STAGE RENAMED -->
+                <div class="pipeline">
+                    <div class="pipe-step" id="stepInward">
+                        <div class="pipe-dot"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/></svg></div>
+                        <div class="pipe-label" id="lblInward">Inward Received</div>
+                    </div>
+                    <div class="pipe-step" id="stepCutting">
+                        <div class="pipe-dot"><svg viewBox="0 0 24 24"><path d="M9.64 7.64c.2-.2.2-.51 0-.71L7.12 4.41c-.2-.2-.51-.2-.71 0l-2 2c-.2.2-.2.51 0 .71l2.52 2.52c.2.2.51.2.71 0l2-2zM19.07 4.93c-.39-.39-1.02-.39-1.41 0l-2.54 2.54 1.41 1.41 2.54-2.54c.39-.39.39-1.03 0-1.41z"/></svg></div>
+                        <div class="pipe-label" id="lblCutting">Cutting Stage</div>
+                    </div>
+                    <div class="pipe-step" id="stepStitching">
+                        <div class="pipe-dot"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></div>
+                        <div class="pipe-label" id="lblStitching">Stitching Stage</div>
+                    </div>
+                    <div class="pipe-step" id="stepQuality">
+                        <div class="pipe-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+                        <div class="pipe-label" id="lblQuality">Product Inspection</div>
+                    </div>
+                    <div class="pipe-step" id="stepDispatched">
+                        <div class="pipe-dot"><svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
+                        <div class="pipe-label" id="lblDispatched">Ready for Delivery</div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div>
+                        <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;" id="lblGarmentHeader">Garment Details</div>
+                        <div style="font-weight:700; color:white;" id="resGarment">500 Sets School Uniform</div>
+                    </div>
+                    <div>
+                        <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;" id="lblFabricHeader">Inward Fabric Length</div>
+                        <div style="font-weight:700; color:white;" id="resFabric">1200 Meters Fabric</div>
+                    </div>
+                    <div>
+                        <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;" id="lblPhoneHeader">Client Phone</div>
+                        <div style="font-weight:700; color:white;" id="resPhone">9842101234</div>
+                    </div>
+                    <div>
+                        <div style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase;" id="lblDeliveryHeader">Est. Delivery Date</div>
+                        <div style="font-weight:700; color:var(--gold);" id="resDelivery">2026-08-05</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: MERCHANT CONTROL PANEL VIEW (AUTH PROTECTED) -->
+    <div class="page-view" id="adminView">
+        <!-- LOGIN BOX (IF NOT LOGGED IN) -->
+        <div class="login-box" id="adminLoginBox">
+            <h2 id="lblLoginHead">TEXTILEHUB <span>ADMIN LOGIN</span></h2>
+            <p style="font-size:0.85rem; color:var(--text-muted);" id="lblLoginSub">Enter merchant credentials to unlock control panel</p>
+
+            <div id="loginErr" style="background:#7f1d1d; color:#fca5a5; padding:0.6rem; border-radius:8px; font-size:0.85rem; display:none;"></div>
+
+            <form id="adminLoginForm" style="display:flex; flex-direction:column; gap:1.25rem;">
+                <div class="form-group">
+                    <label id="lblAdminUserLbl">Username</label>
+                    <input type="text" id="adminUser" class="form-input" value="erode1stone" required>
+                </div>
+                <div class="form-group">
+                    <label id="lblAdminPassLbl">Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="adminPass" class="form-input" value="mythird1" required>
+                        <button type="button" class="eye-btn" onclick="togglePasswordVisibility('adminPass', this)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <button type="button" onclick="openOtpModal()" style="background:none; border:none; color:var(--gold); font-size:0.8rem; font-weight:700; cursor:pointer; text-decoration:underline;">
+                        Forgot Password? Reset via Mobile OTP
+                    </button>
+                </div>
+
+                <button type="submit" class="btn-whatsapp" id="btnAdminSignIn">Sign In to Control Panel</button>
+            </form>
+        </div>
+
+        <!-- FULL DASHBOARD (WHEN LOGGED IN) -->
+        <div class="container" id="adminDashboardContent" style="display:none; flex-direction:column; gap:2rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:1rem;">
+                <div>
+                    <h2 style="font-size:1.6rem; color:white;" id="lblAdminTitle">MERCHANT CONTROL PANEL</h2>
+                    <p style="font-size:0.85rem; color:var(--text-muted);" id="lblAdminSub">Manage textile designs, publish products & track stitching job orders</p>
+                </div>
+                <button onclick="logoutAdmin()" style="background:#dc2626; color:white; border:none; padding:0.5rem 1.2rem; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.85rem;" id="lblLogout">Logout</button>
+            </div>
+
+            <!-- STATS OVERVIEW -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;" id="lblStat1">Total Catalog Designs</div>
+                    <div class="stat-val" id="statProducts"><%= products.length %></div>
+                </div>
+                <div class="stat-card">
+                    <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;" id="lblStat2">Active Stitching Jobs</div>
+                    <div class="stat-val" style="color:var(--gold);">1</div>
+                </div>
+                <div class="stat-card">
+                    <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;" id="lblStat3">Ready for Delivery</div>
+                    <div class="stat-val" style="color:#ef4444;">1</div>
+                </div>
+            </div>
+
+            <!-- FORMS ROW INCLUDING CHANGE CREDENTIALS -->
+            <div class="grid-2">
+                <!-- FORM 1: ADD NEW PRODUCT -->
+                <div class="card-panel">
+                    <h3 style="font-size:1.2rem; color:var(--gold);" id="lblForm1Title">Publish New Saree / Fabric Design</h3>
+                    <form id="addProductForm" style="display:flex; flex-direction:column; gap:0.85rem;">
+                        <div class="form-group">
+                            <label id="lblPName">Product Name</label>
+                            <input type="text" id="pName" class="form-input" placeholder="e.g. Kanchipuram Soft Silk Saree" required>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                            <div class="form-group">
+                                <label id="lblPCat">Category</label>
+                                <select id="pCategory" class="form-input" style="font-weight:700;">
+                                    <option value="1">Silk & Soft Sarees</option>
+                                    <option value="2">Linen & Cotton Shirtings</option>
+                                    <option value="3">Tailoring & Stitching Work</option>
+                                    <option value="4">Nighties & Home</option>
+                                    <option value="5">Uniforms</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label id="lblPFabric">Fabric Type</label>
+                                <input type="text" id="pFabric" class="form-input" placeholder="Soft Silk / Cotton" required>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                            <div class="form-group">
+                                <label id="lblPPrice">Wholesale Price (₹)</label>
+                                <input type="number" step="0.01" id="pPrice" class="form-input" placeholder="1850.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label id="lblPType">Price Type</label>
+                                <select id="pPriceType" class="form-input" style="font-weight:700;">
+                                    <option value="per_piece">per piece</option>
+                                    <option value="per_meter">per meter</option>
+                                    <option value="per_stitching">per stitching set</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="lblPColors">Available Colors & GSM</label>
+                            <input type="text" id="pColors" class="form-input" placeholder="Maroon, Royal Blue, Green (80s Count)">
+                        </div>
+                        <div class="form-group">
+                            <label id="lblPImg">Image URL</label>
+                            <input type="url" id="pImg" class="form-input" value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600">
+                        </div>
+                        <button type="submit" class="btn-whatsapp" style="margin-top:0.4rem;" id="btnPubProd">Publish Design to Catalog</button>
+                    </form>
+                </div>
+
+                <!-- FORM 2: ISSUE JOB WORK TICKET -->
+                <div class="card-panel">
+                    <h3 style="font-size:1.2rem; color:var(--gold);" id="lblForm2Title">Issue Stitching Job Work Ticket</h3>
+                    <form id="addJobForm" style="display:flex; flex-direction:column; gap:0.85rem;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                            <div class="form-group">
+                                <label id="lblJClient">Client Store Name</label>
+                                <input type="text" id="jClient" class="form-input" placeholder="Sri Krishna Garments (CBE)" required>
+                            </div>
+                            <div class="form-group">
+                                <label id="lblJPhone">Client Phone</label>
+                                <input type="tel" id="jPhone" class="form-input" placeholder="9842101234" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="lblJGarment">Garment Work Type</label>
+                            <input type="text" id="jGarment" class="form-input" placeholder="500 Sets School Uniform Stitching" required>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                            <div class="form-group">
+                                <label id="lblJQty">Quantity (Pcs / Sets)</label>
+                                <input type="number" id="jQty" class="form-input" value="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label id="lblJFabric">Inward Fabric Length</label>
+                                <input type="text" id="jFabric" class="form-input" placeholder="1200 Meters Fabric">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label id="lblJDelivery">Est. Delivery Date</label>
+                            <input type="date" id="jDelivery" class="form-input" required>
+                        </div>
+                        <button type="submit" class="btn-whatsapp" style="margin-top:0.4rem;" id="btnIssueTicket">Issue Job Ticket</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- CHANGE MERCHANT USERNAME & PASSWORD SETTINGS -->
+            <div class="card-panel" style="max-width:600px; margin:0 auto; width:100%;">
+                <h3 style="font-size:1.2rem; color:var(--gold);" id="lblChangeCredTitle">Change Merchant Username & Password</h3>
+                <form id="changeCredForm" style="display:flex; flex-direction:column; gap:0.85rem;">
+                    <div class="form-group">
+                        <label id="lblNewUser">New Username</label>
+                        <input type="text" id="newUsername" class="form-input" placeholder="e.g. myerode_shop" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="lblNewPass">New Password</label>
+                        <div class="password-wrap">
+                            <input type="password" id="newPassword" class="form-input" placeholder="e.g. mysecret2026" required>
+                            <button type="button" class="eye-btn" onclick="togglePasswordVisibility('newPassword', this)">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-whatsapp" id="btnUpdateCred">Update Credentials</button>
+                </form>
+            </div>
+
+            <!-- STITCHING JOBS MANAGEMENT TABLE WITH SAFE FALLBACK ARRAY -->
+            <% const activeJobsList = (typeof jobs !== 'undefined' && Array.isArray(jobs) && jobs.length > 0) ? jobs : [
+                { job_ticket_number: 'JOB-88410', client_name: 'Sri Krishna Garments (CBE)', client_phone: '9842101234', garment_type: '500 Sets School Uniform Stitching', quantity: 500, fabric_inward_length: '1200 Meters Fabric', status: 'stitching', estimated_delivery: '2026-08-05' },
+                { job_ticket_number: 'JOB-88411', client_name: 'Bhavani Saree Traders', client_phone: '9443219876', garment_type: '200 Pcs Silk Saree Fall & Pico', quantity: 200, fabric_inward_length: '200 Sarees', status: 'dispatched', estimated_delivery: '2026-07-28' }
+            ]; %>
+
+            <div class="card-panel" style="margin-top:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:0.75rem;">
+                    <h3 style="font-size:1.3rem; color:var(--gold);" id="lblTableTitle">LIVE STITCHING & GARMENT JOB ORDERS</h3>
+                    <span style="font-size:0.8rem; color:var(--text-muted);" id="lblTableSub">Real-time Tailoring Control</span>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="thTicket">Ticket #</th>
+                                <th id="thClient">Client Name</th>
+                                <th id="thGarment">Garment / Stitching Details</th>
+                                <th id="thInward">Inward Length</th>
+                                <th id="thStatus">Status</th>
+                                <th id="thDelivery">Est. Delivery</th>
+                                <th id="thAction">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminJobsTableBody">
+                            <% activeJobsList.forEach(function(job) { %>
+                                <tr id="row-<%= job.job_ticket_number %>">
+                                    <td style="font-weight:800; color:var(--gold);"><%= job.job_ticket_number %></td>
+                                    <td><strong><%= job.client_name %></strong><br><small style="color:var(--text-muted);"><%= job.client_phone %></small></td>
+                                    <td><%= job.quantity %> Pcs - <%= job.garment_type %></td>
+                                    <td><%= job.fabric_inward_length || 'N/A' %></td>
+                                    <td><span class="tag-status <%= job.status %>" id="badge-<%= job.job_ticket_number %>"><%= job.status === 'dispatched' ? 'READY FOR DELIVERY' : (job.status || 'pending').replace('_', ' ') %></span></td>
+                                    <td style="color:var(--gold); font-weight:700;"><%= job.estimated_delivery || 'TBD' %></td>
+                                    <td id="act-col-<%= job.job_ticket_number %>">
+                                        <div style="display:flex; gap:0.3rem;">
+                                            <% if(job.status === 'inward_received') { %>
+                                                <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'cutting')" class="btn-act-cut" style="background:var(--gold); color:black; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem;">Mark Cutting</button>
+                                            <% } else if(job.status === 'cutting') { %>
+                                                <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'stitching')" class="btn-act-stitch" style="background:var(--gold); color:black; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem;">Mark Stitching</button>
+                                            <% } else if(job.status === 'stitching') { %>
+                                                <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'quality_check')" class="btn-act-qc" style="background:var(--gold); color:black; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem;">Mark Product Inspection</button>
+                                            <% } else if(job.status === 'quality_check' || job.status === 'packing') { %>
+                                                <button onclick="updateJobStatus('<%= job.job_ticket_number %>', 'dispatched')" class="btn-act-disp" style="background:#dc2626; color:white; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem; box-shadow:0 0 10px var(--red-glow);">Mark Ready for Delivery</button>
+                                            <% } else { %>
+                                                <span class="lbl-dispatched-tag">Ready for Delivery</span>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHATSAPP ORDER MODAL -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="order-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-size:1.2rem; font-weight:800; color:var(--gold);" id="modalProdTitle">Order Product</h3>
+                <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+
+            <div style="background:#000000; padding:1rem; border-radius:12px; border:1px solid var(--border);">
+                <div><span id="lblModalCodeHead">Item Code</span>: <strong id="modalProdCode" style="color:white;">TX-101</strong></div>
+                <div><span id="lblModalRateHead">Wholesale Rate</span>: <strong id="modalProdPrice" style="color:var(--gold);">₹0.00</strong></div>
+            </div>
+
+            <div class="form-group">
+                <label id="lblModalQty">Required Quantity (Pcs / Meters)</label>
+                <input type="number" id="orderQty" value="10" min="1" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label id="lblModalBuyer">Buyer / Store Name & Location</label>
+                <input type="text" id="buyerInfo" placeholder="e.g. Sri Balaji Textiles, Salem" class="form-input">
+            </div>
+
+            <button class="btn-whatsapp" onclick="sendWhatsAppMessage()" style="margin-top:0.5rem;" id="btnSendWsModal">
+                Send Direct Order to WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- MOBILE OTP RESET MODAL FOR SHANKAR 6374428155 -->
+    <div class="modal-overlay" id="otpResetModal">
+        <div class="order-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-size:1.2rem; font-weight:800; color:var(--gold);">Mobile OTP Password Reset</h3>
+                <button onclick="closeOtpModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+
+            <p style="font-size:0.85rem; color:var(--text-muted);">Registered Merchant Phone: <strong>+91 6374428155</strong></p>
+
+            <div id="otpErr" style="background:#7f1d1d; color:#fca5a5; padding:0.6rem; border-radius:8px; font-size:0.85rem; display:none;"></div>
+            <div id="otpSucc" style="background:#14532d; color:#dcfce7; padding:0.6rem; border-radius:8px; font-size:0.85rem; display:none;"></div>
+
+            <!-- STEP 1: SEND OTP -->
+            <div id="otpStep1" style="display:flex; flex-direction:column; gap:1rem;">
+                <div class="form-group">
+                    <label>Registered Mobile Number</label>
+                    <input type="tel" id="otpPhoneInput" class="form-input" value="6374428155" readonly>
+                </div>
+                <button type="button" class="btn-whatsapp" onclick="sendResetOtp()">Send OTP to Mobile Phone</button>
+            </div>
+
+            <!-- STEP 2: VERIFY OTP & SET NEW CREDENTIALS -->
+            <div id="otpStep2" style="display:none; flex-direction:column; gap:1rem;">
+                <div class="form-group">
+                    <label>4-Digit OTP Code</label>
+                    <input type="text" id="otpCodeInput" class="form-input" placeholder="e.g. 5829" required>
+                </div>
+                <div class="form-group">
+                    <label>New Username</label>
+                    <input type="text" id="otpNewUser" class="form-input" placeholder="e.g. myerode_shop" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <div class="password-wrap">
+                        <input type="password" id="otpNewPass" class="form-input" placeholder="e.g. secret2026" required>
+                        <button type="button" class="eye-btn" onclick="togglePasswordVisibility('otpNewPass', this)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn-whatsapp" onclick="verifyAndResetPassword()">Verify OTP & Reset Credentials</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let activeItem = { name: '', code: '', price: '', whatsapp: '' };
+    let isAdminLoggedIn = false;
+    let currentLang = 'en';
+
+    function openOtpModal() { document.getElementById('otpResetModal').style.display = 'flex'; }
+    function closeOtpModal() { document.getElementById('otpResetModal').style.display = 'none'; }
+
+    async function sendResetOtp() {
+        const phone = document.getElementById('otpPhoneInput').value;
+        const err = document.getElementById('otpErr');
+        const succ = document.getElementById('otpSucc');
+        err.style.display = 'none'; succ.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/v1/admin/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to send OTP');
+
+            succ.textContent = `${data.message} | OTP Code: ${data.otp}`;
+            succ.style.display = 'block';
+
+            document.getElementById('otpStep1').style.display = 'none';
+            document.getElementById('otpStep2').style.display = 'flex';
+        } catch (e) {
+            err.textContent = e.message;
+            err.style.display = 'block';
+        }
+    }
+
+    async function verifyAndResetPassword() {
+        const phone = document.getElementById('otpPhoneInput').value;
+        const otp = document.getElementById('otpCodeInput').value;
+        const newUsername = document.getElementById('otpNewUser').value;
+        const newPassword = document.getElementById('otpNewPass').value;
+
+        const err = document.getElementById('otpErr');
+        const succ = document.getElementById('otpSucc');
+        err.style.display = 'none'; succ.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/v1/admin/verify-reset-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone, otp, newUsername, newPassword })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Verification failed');
+
+            alert(`Credentials Reset Successful! Login with New Username: ${newUsername}`);
+            closeOtpModal();
+            document.getElementById('adminUser').value = newUsername;
+            document.getElementById('adminPass').value = newPassword;
+        } catch (e) {
+            err.textContent = e.message;
+            err.style.display = 'block';
+        }
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+        const inp = document.getElementById(inputId);
+        if (inp.type === 'password') {
+            inp.type = 'text';
+            btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z"/></svg>`;
+        } else {
+            inp.type = 'password';
+            btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+        }
+    }
+
+    const productTranslations = {
+        'Pure Zari Soft Silk Saree (Erode Special)': {
+            name: 'பியூர் ஜரி சாப்ட் சில்க் சேலை (ஈரோடு ஸ்பெஷல்)',
+            desc: 'பாரம்பரிய தென்னிந்திய நெசவு, காண்ட்ராஸ்ட் பல்லு & ரன்னிங் பிளவுஸ் உடன்',
+            fabric: 'சாப்ட் சில்க் பட்டு',
+            gsm: '80s கவுண்ட்',
+            colors: 'மெரூன், ராயல் புளூ, பாட்டில் கிரீன், மஸ்டர்ட் கோல்டு',
+            priceType: '/ பீஸ்'
+        },
+        'Premium Linen Cotton Shirt Fabric': {
+            name: 'பிரீமியம் லினன் காட்டன் சர்ட் துணி',
+            desc: 'ஃபார்மல் மற்றும் கேஷுவல் உடைகளுக்கான உயர்தர லினன் காட்டன் துணி',
+            fabric: 'லினன் காட்டன் மிதவை',
+            gsm: '60s லினன்',
+            colors: 'வெள்ளை, ஸ்கை புளூ, பாஸ்டல் பிங்க், ஆலிவ்',
+            priceType: '/ மீட்டர்'
+        },
+        'Custom Shirt & Pant Tailoring Job Work': {
+            name: 'சர்ட் & பேன்ட் தையல் தையல் வேலை',
+            desc: 'துல்லியமான மெஷின் கட்டிங் மற்றும் டபுள் ஸ்டிச் கஸ்டம் ஆடை தையல் சேவை',
+            fabric: 'ஆடை தையல் வேலை',
+            gsm: 'தையல் சேவை',
+            colors: 'கஸ்டம் ஃபிட்',
+            priceType: '/ தையல் செட்'
+        },
+        'Printed Cotton Nighty (100% Pure Cotton)': {
+            name: 'பிரிண்டட் காட்டன் நைட்டி (100% தூய காட்டன்)',
+            desc: 'தினசரி பயன்பாட்டிற்கான மென்மையான நைட்டிகள், சாயம்போகாத வண்ணங்கள்',
+            fabric: '100% தூய காட்டன்',
+            gsm: '140 ஜிஎஸ்எம்',
+            colors: 'ஃப்ளோரல் பிங்க், சையான், வயலட், மெரூன்',
+            priceType: '/ பீஸ்'
+        },
+        'School & Industrial Uniform Fabric Set': {
+            name: 'பள்ளி & தொழில்துறை சீருடை துணி செட்',
+            desc: 'நீடித்த ஆயுள் கொண்ட பாலி காட்டன் சூட்டிங் & சர்ட்டிங் சீருடை செட்கள்',
+            fabric: 'பாலி காட்டன் ஹெவி',
+            gsm: '220 ஜிஎஸ்எம்',
+            colors: 'நேவி புளூ, காக்கி, மெரூன் செக், கிரே',
+            priceType: '/ பீஸ்'
+        }
+    };
+
+    const translations = {
+        en: {
+            txtLangLabel: 'Tamil (தமிழ்)',
+            tabCatalog: 'Digital Catalog',
+            tabTrack: 'Job Work Tracker',
+            tabAdmin: 'Merchant Control',
+            heroTitle: 'TEXTILEHUB <span>ERODE</span>',
+            heroSubtitle: 'Erode Wholesale Soft Silk Sarees, Shirtings, Nighties & Custom Garment Stitching',
+            catAll: 'All Collections',
+            cat1: 'Silk & Soft Sarees',
+            cat2: 'Linen & Cotton Shirtings',
+            cat3: 'Tailoring Job Work',
+            cat4: 'Nighties & Home',
+            cat5: 'Uniforms',
+            orderWs: 'Order via WhatsApp',
+            trackTitle: 'STITCHING & GARMENT JOB TRACKER',
+            trackSub: 'Enter your Job Ticket Number to check live stitching & delivery progress',
+            btnCheckStatus: 'Check Status',
+            lblInward: 'Inward Received',
+            lblCutting: 'Cutting Stage',
+            lblStitching: 'Stitching Stage',
+            lblQuality: 'Product Inspection',
+            lblDispatched: 'Ready for Delivery',
+            lblGarmentHeader: 'Garment Details',
+            lblFabricHeader: 'Inward Fabric Length',
+            lblPhoneHeader: 'Client Phone',
+            lblDeliveryHeader: 'Est. Delivery Date',
+            lblLoginHead: 'TEXTILEHUB <span>ADMIN LOGIN</span>',
+            lblLoginSub: 'Enter merchant credentials to unlock control panel',
+            lblAdminUserLbl: 'Username',
+            lblAdminPassLbl: 'Password',
+            btnAdminSignIn: 'Sign In to Control Panel',
+            lblAdminTitle: 'MERCHANT CONTROL PANEL',
+            lblAdminSub: 'Manage textile designs, publish products & track stitching job orders',
+            lblLogout: 'Logout',
+            lblStat1: 'Total Catalog Designs',
+            lblStat2: 'Active Stitching Jobs',
+            lblStat3: 'Ready for Delivery',
+            lblForm1Title: 'Publish New Saree / Fabric Design',
+            lblForm2Title: 'Issue Stitching Job Work Ticket',
+            lblTableTitle: 'LIVE STITCHING & GARMENT JOB ORDERS',
+            lblTableSub: 'Real-time Tailoring Control',
+            lblChangeCredTitle: 'Change Merchant Username & Password',
+            lblNewUser: 'New Username',
+            lblNewPass: 'New Password',
+            btnUpdateCred: 'Update Credentials',
+            btnPubProd: 'Publish Design to Catalog',
+            btnIssueTicket: 'Issue Job Ticket',
+            lblPName: 'Product Name',
+            lblPCat: 'Category',
+            lblPFabric: 'Fabric Type',
+            lblPPrice: 'Wholesale Price (₹)',
+            lblPType: 'Price Type',
+            lblPColors: 'Available Colors & GSM',
+            lblPImg: 'Image URL',
+            lblJClient: 'Client Store Name',
+            lblJPhone: 'Client Phone',
+            lblJGarment: 'Garment Work Type',
+            lblJQty: 'Quantity (Pcs / Sets)',
+            lblJFabric: 'Inward Fabric Length',
+            lblJDelivery: 'Est. Delivery Date',
+            thTicket: 'Ticket #',
+            thClient: 'Client Name',
+            thGarment: 'Garment / Stitching Details',
+            thInward: 'Inward Length',
+            thStatus: 'Status',
+            thDelivery: 'Est. Delivery',
+            thAction: 'Action',
+            btnActCut: 'Mark Cutting',
+            btnActStitch: 'Mark Stitching',
+            btnActQc: 'Mark Product Inspection',
+            btnActDisp: 'Mark Ready for Delivery',
+            lblDispatchedTag: 'Ready for Delivery',
+            lblModalCodeHead: 'Item Code',
+            lblModalRateHead: 'Wholesale Rate',
+            lblModalQty: 'Required Quantity (Pcs / Meters)',
+            lblModalBuyer: 'Buyer / Store Name & Location',
+            btnSendWsModal: 'Send Direct Order to WhatsApp'
+        },
+        ta: {
+            txtLangLabel: 'English',
+            tabCatalog: 'டிஜிட்டல் கேட்லாக்',
+            tabTrack: 'தையல் ஸ்டேட்டஸ்',
+            tabAdmin: 'வணிகர் கட்டுப்பாடு',
+            heroTitle: 'டெக்ஸ்டைல் ஹப் <span>ஈரோடு</span>',
+            heroSubtitle: 'ஈரோடு மொத்த விற்பனை பட்டுச் சேலைகள், சர்ட்டிங் துணிகள் & தையல் வேலைகள்',
+            catAll: 'அனைத்து ரகங்கள்',
+            cat1: 'பட்டு & சாப்ட் சேலைகள்',
+            cat2: 'காட்டன் & லினன் துணிகள்',
+            cat3: 'தையல் வேலைகள்',
+            cat4: 'நைட்டிகள்',
+            cat5: 'யூனிபார்ம் துணிகள்',
+            orderWs: 'வாட்ஸ்அப்பில் ஆர்டர் செய்ய',
+            trackTitle: 'தையல் வேலை நேரடி கண்காணிப்பு',
+            trackSub: 'உங்கள் தையல் டிக்கெட் எண்ணை உள்ளிட்டு தையல் நிலையை அறியவும்',
+            btnCheckStatus: 'நிலையை அறி',
+            lblInward: 'துணி பெறப்பட்டது',
+            lblCutting: 'கட்டிங் நிலை',
+            lblStitching: 'தையல் நிலை',
+            lblQuality: 'தயாரிப்பு நிலை',
+            lblDispatched: 'டெலிவரிக்கு தயார்',
+            lblGarmentHeader: 'ஆடை விவரங்கள்',
+            lblFabricHeader: 'உள்வந்த துணியின் அளவு',
+            lblPhoneHeader: 'வாடிக்கையாளர் போன்',
+            lblDeliveryHeader: 'டெலிவரி எதிர்பார்க்கப்படும் தேதி',
+            lblLoginHead: 'டெக்ஸ்டைல் ஹப் <span>அட்மின் உள்நுழைவு</span>',
+            lblLoginSub: 'கட்டுப்பாட்டு மையத்தைத் திறக்க வணிகர் விபரங்களை உள்ளிடவும்',
+            lblAdminUserLbl: 'பயனர் பெயர்',
+            lblAdminPassLbl: 'கடவுச்சொல்',
+            btnAdminSignIn: 'கட்டுப்பாட்டு மையத்தில் நுழைக',
+            lblAdminTitle: 'வணிகர் கட்டுப்பாட்டு மையம்',
+            lblAdminSub: 'ஜவுளி டிசைன்களைப் பதிவேற்றவும் & தையல் ஆர்டர்களைக் கண்காணிக்கவும்',
+            lblLogout: 'வெளியேறு',
+            lblStat1: 'மொத்த டிசைன்கள்',
+            lblStat2: 'நடப்பில் உள்ள தையல் வேலைகள்',
+            lblStat3: 'டெலிவரிக்கு தயாராக உள்ளவை',
+            lblForm1Title: 'புதிய சேலை / ஆடை டிசைன் பதிவேற்ற',
+            lblForm2Title: 'புதிய தையல் டிக்கெட் உருவாக்க',
+            lblTableTitle: 'நேரடி தையல் ஆர்டர்கள் பட்டியல்',
+            lblTableSub: 'நிகழ்நேர தையல் மேலாண்மை',
+            lblChangeCredTitle: 'வணிகர் பயனர் பெயர் & கடவுச்சொல் மாற்ற',
+            lblNewUser: 'புதிய பயனர் பெயர்',
+            lblNewPass: 'புதிய கடவுச்சொல்',
+            btnUpdateCred: 'விபரங்களை புதுப்பி',
+            btnPubProd: 'கேட்லாக்கில் பதிவேற்று',
+            btnIssueTicket: 'தையல் டிக்கெட் வழங்கு',
+            lblPName: 'பொருளின் பெயர்',
+            lblPCat: 'பிரிவு',
+            lblPFabric: 'துணி வகை',
+            lblPPrice: 'மொத்த விலை (₹)',
+            lblPType: 'விலை வகை',
+            lblPColors: 'கிடைக்கும் வண்ணங்கள் & GSM',
+            lblPImg: 'படம் URL',
+            lblJClient: 'வாடிக்கையாளர் கடை பெயர்',
+            lblJPhone: 'வாடிக்கையாளர் போன்',
+            lblJGarment: 'தையல் ஆடை வகை',
+            lblJQty: 'எண்ணிக்கை (பீஸ் / செட்)',
+            lblJFabric: 'உள்வந்த துணியின் அளவு',
+            lblJDelivery: 'எதிர்பார்க்கப்படும் தேதி',
+            thTicket: 'டிக்கெட் #',
+            thClient: 'வாடிக்கையாளர் பெயர்',
+            thGarment: 'ஆடை தையல் விவரங்கள்',
+            thInward: 'துணி அளவு',
+            thStatus: 'நிலை',
+            thDelivery: 'டெலிவரி தேதி',
+            thAction: 'நடவடிக்கை',
+            btnActCut: 'கட்டிங் என மாற்று',
+            btnActStitch: 'தையல் என மாற்று',
+            btnActQc: 'தயாரிப்பு நிலை என மாற்று',
+            btnActDisp: 'டெலிவரிக்கு தயார் என மாற்று',
+            lblDispatchedTag: 'டெலிவரிக்கு தயார்',
+            lblModalCodeHead: 'பொருள் கோடு',
+            lblModalRateHead: 'மொத்த விலை',
+            lblModalQty: 'தேவையான எண்ணிக்கை (பீஸ் / மீட்டர்)',
+            lblModalBuyer: 'வாங்குபவர் பெயர் & ஊர்',
+            btnSendWsModal: 'வாட்ஸ்அப்பில் ஆர்டர் அனுப்புக'
+        }
+    };
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'en' ? 'ta' : 'en';
+        const t = translations[currentLang];
+
+        document.getElementById('txtLangLabel').textContent = t.txtLangLabel;
+        document.getElementById('txtTabCatalog').textContent = t.tabCatalog;
+        document.getElementById('txtTabTrack').textContent = t.tabTrack;
+        document.getElementById('txtTabAdmin').textContent = t.tabAdmin;
+        document.getElementById('heroTitle').innerHTML = t.heroTitle;
+        document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+
+        document.getElementById('catAll').textContent = t.catAll;
+        document.getElementById('cat1').textContent = t.cat1;
+        document.getElementById('cat2').textContent = t.cat2;
+        document.getElementById('cat3').textContent = t.cat3;
+        document.getElementById('cat4').textContent = t.cat4;
+        document.getElementById('cat5').textContent = t.cat5;
+
+        document.querySelectorAll('.ws-btn-text').forEach(el => el.textContent = t.orderWs);
+
+        // Product Cards Deep Translation
+        document.querySelectorAll('.product-card').forEach(card => {
+            const titleEl = card.querySelector('.card-p-title');
+            const descEl = card.querySelector('.card-p-desc');
+            const fabricEl = card.querySelector('.card-p-fabric');
+            const gsmEl = card.querySelector('.card-p-gsm');
+            const colorsEl = card.querySelector('.card-p-colors');
+            const priceTypeEl = card.querySelector('.card-p-price-type');
+
+            const origTitle = titleEl.getAttribute('data-en');
+            const pTrans = productTranslations[origTitle];
+
+            if (currentLang === 'ta' && pTrans) {
+                titleEl.textContent = pTrans.name;
+                descEl.textContent = pTrans.desc;
+                fabricEl.textContent = `துணி: ${pTrans.fabric}`;
+                gsmEl.textContent = `கவுண்ட்: ${pTrans.gsm}`;
+                colorsEl.textContent = `வண்ணங்கள்: ${pTrans.colors}`;
+                priceTypeEl.textContent = pTrans.priceType;
+            } else {
+                titleEl.textContent = origTitle;
+                descEl.textContent = descEl.getAttribute('data-en');
+                fabricEl.textContent = `Fabric: ${fabricEl.getAttribute('data-en')}`;
+                gsmEl.textContent = `Count: ${gsmEl.getAttribute('data-en')}`;
+                colorsEl.textContent = `Colors: ${colorsEl.getAttribute('data-en')}`;
+                priceTypeEl.textContent = `/ ${priceTypeEl.getAttribute('data-en')}`;
+            }
+        });
+
+        document.getElementById('trackTitle').textContent = t.trackTitle;
+        document.getElementById('trackSub').textContent = t.trackSub;
+        document.getElementById('btnCheckStatus').textContent = t.btnCheckStatus;
+
+        document.getElementById('lblInward').textContent = t.lblInward;
+        document.getElementById('lblCutting').textContent = t.lblCutting;
+        document.getElementById('lblStitching').textContent = t.lblStitching;
+        document.getElementById('lblQuality').textContent = t.lblQuality;
+        document.getElementById('lblDispatched').textContent = t.lblDispatched;
+
+        document.getElementById('lblGarmentHeader').textContent = t.lblGarmentHeader;
+        document.getElementById('lblFabricHeader').textContent = t.lblFabricHeader;
+        document.getElementById('lblPhoneHeader').textContent = t.lblPhoneHeader;
+        document.getElementById('lblDeliveryHeader').textContent = t.lblDeliveryHeader;
+
+        document.getElementById('lblLoginHead').innerHTML = t.lblLoginHead;
+        document.getElementById('lblLoginSub').textContent = t.lblLoginSub;
+        document.getElementById('lblAdminUserLbl').textContent = t.lblAdminUserLbl;
+        document.getElementById('lblAdminPassLbl').textContent = t.lblAdminPassLbl;
+        document.getElementById('btnAdminSignIn').textContent = t.btnAdminSignIn;
+
+        document.getElementById('lblAdminTitle').textContent = t.lblAdminTitle;
+        document.getElementById('lblAdminSub').textContent = t.lblAdminSub;
+        document.getElementById('lblLogout').textContent = t.lblLogout;
+
+        document.getElementById('lblStat1').textContent = t.lblStat1;
+        document.getElementById('lblStat2').textContent = t.lblStat2;
+        document.getElementById('lblStat3').textContent = t.lblStat3;
+
+        document.getElementById('lblForm1Title').textContent = t.lblForm1Title;
+        document.getElementById('lblForm2Title').textContent = t.lblForm2Title;
+        document.getElementById('lblTableTitle').textContent = t.lblTableTitle;
+        document.getElementById('lblTableSub').textContent = t.lblTableSub;
+
+        document.getElementById('lblChangeCredTitle').textContent = t.lblChangeCredTitle;
+        document.getElementById('lblNewUser').textContent = t.lblNewUser;
+        document.getElementById('lblNewPass').textContent = t.lblNewPass;
+        document.getElementById('btnUpdateCred').textContent = t.btnUpdateCred;
+
+        document.getElementById('btnPubProd').textContent = t.btnPubProd;
+        document.getElementById('btnIssueTicket').textContent = t.btnIssueTicket;
+
+        document.getElementById('lblPName').textContent = t.lblPName;
+        document.getElementById('lblPCat').textContent = t.lblPCat;
+        document.getElementById('lblPFabric').textContent = t.lblPFabric;
+        document.getElementById('lblPPrice').textContent = t.lblPPrice;
+        document.getElementById('lblPType').textContent = t.lblPType;
+        document.getElementById('lblPColors').textContent = t.lblPColors;
+        document.getElementById('lblPImg').textContent = t.lblPImg;
+
+        document.getElementById('lblJClient').textContent = t.lblJClient;
+        document.getElementById('lblJPhone').textContent = t.lblJPhone;
+        document.getElementById('lblJGarment').textContent = t.lblJGarment;
+        document.getElementById('lblJQty').textContent = t.lblJQty;
+        document.getElementById('lblJFabric').textContent = t.lblJFabric;
+        document.getElementById('lblJDelivery').textContent = t.lblJDelivery;
+
+        document.getElementById('thTicket').textContent = t.thTicket;
+        document.getElementById('thClient').textContent = t.thClient;
+        document.getElementById('thGarment').textContent = t.thGarment;
+        document.getElementById('thInward').textContent = t.thInward;
+        document.getElementById('thStatus').textContent = t.thStatus;
+        document.getElementById('thDelivery').textContent = t.thDelivery;
+        document.getElementById('thAction').textContent = t.thAction;
+
+        document.querySelectorAll('.btn-act-cut').forEach(el => el.textContent = t.btnActCut);
+        document.querySelectorAll('.btn-act-stitch').forEach(el => el.textContent = t.btnActStitch);
+        document.querySelectorAll('.btn-act-qc').forEach(el => el.textContent = t.btnActQc);
+        document.querySelectorAll('.btn-act-disp').forEach(el => el.textContent = t.btnActDisp);
+        document.querySelectorAll('.lbl-dispatched-tag').forEach(el => el.textContent = t.lblDispatchedTag);
+
+        document.getElementById('lblModalCodeHead').textContent = t.lblModalCodeHead;
+        document.getElementById('lblModalRateHead').textContent = t.lblModalRateHead;
+        document.getElementById('lblModalQty').textContent = t.lblModalQty;
+        document.getElementById('lblModalBuyer').textContent = t.lblModalBuyer;
+        document.getElementById('btnSendWsModal').textContent = t.btnSendWsModal;
+    }
+
+    function switchTab(viewId) {
+        document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        document.getElementById(viewId).classList.add('active');
+
+        if (viewId === 'catalogView') document.getElementById('btnTabCatalog').classList.add('active');
+        if (viewId === 'trackerView') {
+            document.getElementById('btnTabTrack').classList.add('active');
+            trackJob(); // Refresh tracker state automatically when switching to 2nd tab!
+        }
+        if (viewId === 'adminView') {
+            document.getElementById('btnTabAdmin').classList.add('active');
+            if (isAdminLoggedIn) {
+                document.getElementById('adminLoginBox').style.display = 'none';
+                document.getElementById('adminDashboardContent').style.display = 'flex';
+            } else {
+                document.getElementById('adminLoginBox').style.display = 'flex';
+                document.getElementById('adminDashboardContent').style.display = 'none';
+            }
+        }
+    }
+
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errBox = document.getElementById('loginErr');
+        errBox.style.display = 'none';
+
+        const username = document.getElementById('adminUser').value;
+        const password = document.getElementById('adminPass').value;
+
+        try {
+            const res = await fetch('/api/v1/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Invalid credentials');
+
+            isAdminLoggedIn = true;
+            document.getElementById('adminLoginBox').style.display = 'none';
+            document.getElementById('adminDashboardContent').style.display = 'flex';
+        } catch (err) {
+            errBox.textContent = err.message;
+            errBox.style.display = 'block';
+        }
+    });
+
+    document.getElementById('changeCredForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newUsername = document.getElementById('newUsername').value;
+        const newPassword = document.getElementById('newPassword').value;
+
+        try {
+            const res = await fetch('/api/v1/admin/credentials', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newUsername, newPassword })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to update credentials');
+
+            alert(`Credentials updated successfully! New Username: ${newUsername}`);
+            document.getElementById('changeCredForm').reset();
+        } catch (err) {
+            alert(err.message);
+        }
+    });
+
+    function logoutAdmin() {
+        isAdminLoggedIn = false;
+        document.getElementById('adminLoginBox').style.display = 'flex';
+        document.getElementById('adminDashboardContent').style.display = 'none';
+    }
+
+    function filterCategory(catId, btn) {
+        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach(card => {
+            if (catId === 'all' || card.getAttribute('data-cat') == catId) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function openOrderModal(name, code, price, whatsapp) {
+        activeItem = { name, code, price, whatsapp };
+        document.getElementById('modalProdTitle').textContent = name;
+        document.getElementById('modalProdCode').textContent = code;
+        document.getElementById('modalProdPrice').textContent = `₹${parseFloat(price).toFixed(2)}`;
+        document.getElementById('orderModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+
+    function sendWhatsAppMessage() {
+        const qty = document.getElementById('orderQty').value || 1;
+        const buyer = document.getElementById('buyerInfo').value || 'Buyer';
+        const phone = activeItem.whatsapp || '916374428155';
+
+        const msg = `*NEW TEXTILE ORDER ENQUIRY*%0A%0A` +
+                    `*Product:* ${encodeURIComponent(activeItem.name)}%0A` +
+                    `*Code:* ${encodeURIComponent(activeItem.code)}%0A` +
+                    `*Rate:* ₹${activeItem.price}%0A` +
+                    `*Quantity:* ${qty} Pcs/Meters%0A` +
+                    `*Buyer Info:* ${encodeURIComponent(buyer)}%0A%0A` +
+                    `_Sent via TextileHub Erode Digital Catalog_`;
+
+        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+        closeModal();
+    }
+
+    async function trackJob() {
+        const ticket = document.getElementById('ticketInput').value;
+        const errBox = document.getElementById('errorMsg');
+        const resCard = document.getElementById('resultCard');
+        errBox.style.display = 'none';
+
+        if (!ticket) return;
+
+        try {
+            const res = await fetch(`/api/v1/jobs/track/${encodeURIComponent(ticket)}`);
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || 'Ticket not found');
+
+            const job = data.data;
+            document.getElementById('resTicketNo').textContent = job.job_ticket_number;
+            document.getElementById('resClient').textContent = job.client_name;
+            document.getElementById('resGarment').textContent = `${job.quantity} Pcs - ${job.garment_type}`;
+            document.getElementById('resFabric').textContent = job.fabric_inward_length || 'N/A';
+            document.getElementById('resPhone').textContent = job.client_phone;
+            document.getElementById('resDelivery').textContent = job.estimated_delivery || 'To be updated';
+            
+            const displayStatus = job.status === 'dispatched' ? (currentLang === 'ta' ? 'டெலிவரிக்கு தயார்' : 'READY FOR DELIVERY') : (job.status || 'pending').replace('_', ' ');
+            document.getElementById('resStatusBadge').textContent = displayStatus;
+
+            const status = String(job.status || '').toLowerCase();
+            updatePipeline(status);
+
+            resCard.style.display = 'flex';
+        } catch (err) {
+            resCard.style.display = 'none';
+            errBox.textContent = err.message;
+            errBox.style.display = 'block';
+        }
+    }
+
+    function updatePipeline(status) {
+        const steps = ['Inward', 'Cutting', 'Stitching', 'Quality', 'Dispatched'];
+        const statusMap = {
+            'inward_received': 0,
+            'cutting': 1,
+            'stitching': 2,
+            'quality_check': 3,
+            'packing': 3,
+            'dispatched': 4
+        };
+
+        const activeIdx = statusMap[status] !== undefined ? statusMap[status] : 0;
+
+        steps.forEach((st, idx) => {
+            const el = document.getElementById(`step${st}`);
+            el.className = 'pipe-step';
+            if (idx < activeIdx) el.classList.add('done');
+            if (idx === activeIdx) el.classList.add(status === 'dispatched' ? 'done' : 'active');
+        });
+    }
+
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const body = {
+                name: document.getElementById('pName').value,
+                category_id: document.getElementById('pCategory').value,
+                fabric_type: document.getElementById('pFabric').value,
+                price: document.getElementById('pPrice').value,
+                price_type: document.getElementById('pPriceType').value,
+                available_colors: document.getElementById('pColors').value,
+                image_url: document.getElementById('pImg').value
+            };
+
+            const res = await fetch('/api/v1/admin/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'erode1stone', password: 'mythird1', ...body })
+            });
+
+            if (!res.ok) throw new Error('Failed to add product');
+            alert('Product published to catalog!');
+            document.getElementById('addProductForm').reset();
+        } catch (err) { alert(err.message); }
+    });
+
+    document.getElementById('addJobForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const body = {
+                client_name: document.getElementById('jClient').value,
+                client_phone: document.getElementById('jPhone').value,
+                garment_type: document.getElementById('jGarment').value,
+                quantity: document.getElementById('jQty').value,
+                fabric_inward_length: document.getElementById('jFabric').value,
+                estimated_delivery: document.getElementById('jDelivery').value
+            };
+
+            const res = await fetch('/api/v1/admin/jobs', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: 'erode1stone', password: 'mythird1', ...body })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error('Failed to create job');
+            alert(`Stitching Job Ticket Created: ${data.ticketNumber}`);
+            document.getElementById('addJobForm').reset();
+        } catch (err) { alert(err.message); }
+    });
+
+    // IN-PAGE REAL-TIME STATUS UPDATE (NO PAGE RELOAD / NO LOGOUT / STAYS ON TAB 3!)
+    async function updateJobStatus(ticket, nextStatus) {
+        try {
+            const res = await fetch(`/api/v1/admin/jobs/${ticket}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: nextStatus })
+            });
+
+            if (!res.ok) throw new Error('Status update failed');
+
+            // Update status badge on page without reloading!
+            const badgeEl = document.getElementById(`badge-${ticket}`);
+            const actCol = document.getElementById(`act-col-${ticket}`);
+
+            if (badgeEl) {
+                badgeEl.className = `tag-status ${nextStatus}`;
+                const textLabel = nextStatus === 'dispatched' ? (currentLang === 'ta' ? 'டெலிவரிக்கு தயார்' : 'READY FOR DELIVERY') : nextStatus.replace('_', ' ');
+                badgeEl.textContent = textLabel;
+            }
+
+            if (actCol) {
+                if (nextStatus === 'cutting') {
+                    actCol.innerHTML = `<button onclick="updateJobStatus('${ticket}', 'stitching')" class="btn-act-stitch" style="background:var(--gold); color:black; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem;">Mark Stitching</button>`;
+                } else if (nextStatus === 'stitching') {
+                    actCol.innerHTML = `<button onclick="updateJobStatus('${ticket}', 'quality_check')" class="btn-act-qc" style="background:var(--gold); color:black; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem;">Mark Product Inspection</button>`;
+                } else if (nextStatus === 'quality_check') {
+                    actCol.innerHTML = `<button onclick="updateJobStatus('${ticket}', 'dispatched')" class="btn-act-disp" style="background:#dc2626; color:white; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-weight:800; cursor:pointer; font-size:0.75rem; box-shadow:0 0 10px var(--red-glow);">Mark Ready for Delivery</button>`;
+                } else if (nextStatus === 'dispatched') {
+                    actCol.innerHTML = `<span class="lbl-dispatched-tag">Ready for Delivery</span>`;
+                }
+            }
+
+            alert(`Status for ${ticket} updated to: ${nextStatus.replace('_', ' ')}`);
+        } catch (err) { alert(err.message); }
+    }
+
+    // PWA Prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('pwaBanner').style.display = 'flex';
+    });
+
+    document.getElementById('installBtn').addEventListener('click', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+                deferredPrompt = null;
+                document.getElementById('pwaBanner').style.display = 'none';
+            });
+        }
+    });
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+    }
+
+    trackJob();
+</script>
+</body>
+</html>
