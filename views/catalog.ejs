@@ -154,6 +154,9 @@
 
         .lbl-dispatched-tag { color: #ef4444; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        .btn-del-prod { background: #dc2626; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+        .btn-del-prod:hover { background: #ef4444; box-shadow: 0 0 10px var(--red-glow); }
+
         /* MODAL */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 200; padding: 1rem; }
         .order-modal { background: var(--panel); border: 1px solid var(--gold); border-radius: 24px; padding: 2rem; width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 1.25rem; color: white; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
@@ -216,7 +219,7 @@
         <div class="container">
             <div class="products-grid" id="productsGrid">
                 <% products.forEach(function(item, idx) { %>
-                    <div class="product-card" data-cat="<%= item.category_id || 1 %>" data-id="<%= item.id %>">
+                    <div class="product-card" data-cat="<%= item.category_id || 1 %>" data-id="<%= item.id %>" id="card-<%= item.id %>">
                         <div>
                             <div class="card-img-wrap">
                                 <span class="badge-cat badge-cat-txt" data-en="<%= item.category_name || 'TEXTILE' %>"><%= item.category_name || 'TEXTILE' %></span>
@@ -471,6 +474,41 @@
                         </div>
                         <button type="submit" class="btn-whatsapp" style="margin-top:0.4rem;" id="btnIssueTicket">Issue Job Ticket</button>
                     </form>
+                </div>
+            </div>
+
+            <!-- CATALOG COLLECTIONS MANAGEMENT TABLE (ADD & DELETE DESIGNS) -->
+            <div class="card-panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:0.75rem;">
+                    <h3 style="font-size:1.3rem; color:var(--gold);" id="lblCatalogManageTitle">MANAGE CATALOG COLLECTIONS</h3>
+                    <span style="font-size:0.8rem; color:var(--text-muted);" id="lblCatalogManageSub">Add or Delete Product Designs</span>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th id="thCode">Code</th>
+                                <th id="thProdName">Design / Product Name</th>
+                                <th id="thProdFabric">Fabric & Specs</th>
+                                <th id="thProdPrice">Wholesale Price</th>
+                                <th id="thProdAction">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductsTableBody">
+                            <% products.forEach(function(p) { %>
+                                <tr id="admin-prod-row-<%= p.id %>">
+                                    <td style="font-weight:800; color:var(--gold);"><%= p.code %></td>
+                                    <td><strong><%= p.name %></strong></td>
+                                    <td><%= p.fabric_type %> (<%= p.gsm_count || 'N/A' %>)</td>
+                                    <td style="font-weight:700; color:var(--gold);">₹<%= parseFloat(p.price).toFixed(2) %> / <%= p.price_type %></td>
+                                    <td>
+                                        <button onclick="deleteProduct('<%= p.id %>')" class="btn-del-prod" id="btn-del-<%= p.id %>">Delete Design</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -1228,11 +1266,86 @@
                 body: JSON.stringify({ username: 'erode1stone', password: 'mythird1', ...body })
             });
 
+            const data = await res.json();
             if (!res.ok) throw new Error('Failed to add product');
             alert('Product published to catalog!');
             document.getElementById('addProductForm').reset();
+            
+            // Append product to DOM in real-time
+            if (data.product) {
+                const p = data.product;
+                const grid = document.getElementById('productsGrid');
+                const cardHtml = `
+                    <div class="product-card" data-cat="${p.category_id}" data-id="${p.id}" id="card-${p.id}">
+                        <div>
+                            <div class="card-img-wrap">
+                                <span class="badge-cat badge-cat-txt" data-en="${p.category_name}">${p.category_name}</span>
+                                <img src="${p.image_url}" alt="${p.name}" loading="lazy">
+                            </div>
+                            <div class="card-body">
+                                <div>
+                                    <h3 class="product-title card-p-title" data-en="${p.name}">${p.name}</h3>
+                                    <p class="product-desc card-p-desc" data-en="${p.description}">${p.description}</p>
+                                </div>
+                                <div class="specs-list">
+                                    <span class="spec-tag card-p-fabric" data-en="${p.fabric_type}">Fabric: ${p.fabric_type}</span>
+                                    <span class="spec-tag card-p-gsm" data-en="${p.gsm_count}">Count: ${p.gsm_count}</span>
+                                    <span class="spec-tag card-p-colors" data-en="${p.available_colors}">Colors: ${p.available_colors}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 1.25rem 1.25rem;">
+                            <div class="price-row" style="margin-bottom:0.85rem;">
+                                <div>
+                                    <span class="price-val">₹${parseFloat(p.price).toFixed(2)}</span>
+                                    <span class="price-type card-p-price-type" data-en="${p.price_type}">/ ${p.price_type}</span>
+                                </div>
+                                <span style="font-size:0.75rem; color:var(--gold); font-weight:700;" class="card-p-code">Code: ${p.code}</span>
+                            </div>
+                            <button class="btn-whatsapp btn-order-ws" onclick="openOrderModal('${p.name}', '${p.code}', '${p.price}', '${merchant.whatsapp}')">
+                                <span class="ws-btn-text">Order via WhatsApp</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('afterbegin', cardHtml);
+
+                const tableBody = document.getElementById('adminProductsTableBody');
+                const rowHtml = `
+                    <tr id="admin-prod-row-${p.id}">
+                        <td style="font-weight:800; color:var(--gold);">${p.code}</td>
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.fabric_type} (${p.gsm_count})</td>
+                        <td style="font-weight:700; color:var(--gold);">₹${parseFloat(p.price).toFixed(2)} / ${p.price_type}</td>
+                        <td><button onclick="deleteProduct('${p.id}')" class="btn-del-prod">Delete Design</button></td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('afterbegin', rowHtml);
+            }
         } catch (err) { alert(err.message); }
     });
+
+    // REAL-TIME DELETE PRODUCT FROM CATALOG (NO RELOAD!)
+    async function deleteProduct(productId) {
+        if (!confirm('Are you sure you want to delete this design collection from catalog?')) return;
+
+        try {
+            const res = await fetch(`/api/v1/admin/products/${productId}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) throw new Error('Failed to delete product');
+
+            // Remove card from catalog and row from table without reloading!
+            const cardEl = document.getElementById(`card-${productId}`);
+            const rowEl = document.getElementById(`admin-prod-row-${productId}`);
+
+            if (cardEl) cardEl.remove();
+            if (rowEl) rowEl.remove();
+
+            alert('Product design collection deleted from catalog successfully!');
+        } catch (err) { alert(err.message); }
+    }
 
     document.getElementById('addJobForm').addEventListener('submit', async (e) => {
         e.preventDefault();

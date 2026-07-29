@@ -39,7 +39,7 @@ let activeOtpStore = {};
 let dbEngine = 'mysql';
 let pool;
 
-const memoryProducts = [
+let memoryProducts = [
   { id: 1, uuid: 'p01', code: 'TX-S01', name: 'Pure Zari Soft Silk Saree (Erode Special)', description: 'Traditional South Indian Weave with Rich Contrast Pallu & Running Blouse', fabric_type: 'Soft Silk', gsm_count: '80s Count', available_colors: 'Maroon, Royal Blue, Bottle Green, Mustard Gold', price: 1850.00, price_type: 'per_piece', category_name: 'SAREES', category_id: 1, image_url: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80', is_available: 1 },
   { id: 2, uuid: 'p02', code: 'TX-SH02', name: 'Premium Linen Cotton Shirt Fabric', description: 'Breathable Pure Linen Cotton Shirting for Formal & Casual Wear', fabric_type: 'Linen Cotton Blend', gsm_count: '60s Linen', available_colors: 'White, Sky Blue, Pastel Pink, Olive', price: 220.00, price_type: 'per_meter', category_name: 'SHIRT FABRICS', category_id: 2, image_url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80', is_available: 1 },
   { id: 3, uuid: 'p03', code: 'TX-ST03', name: 'Custom Shirt & Pant Tailoring Job Work', description: 'Precision Machine Cut & Double Stitch Custom Garment Stitching Service', fabric_type: 'Garment Stitching', gsm_count: 'Tailoring Service', available_colors: 'Custom Fit', price: 280.00, price_type: 'per_stitching', category_name: 'TAILORING STITCHING', category_id: 3, image_url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&auto=format&fit=crop&q=80', is_available: 1 },
@@ -228,9 +228,7 @@ app.post('/api/v1/admin/login', (req, res) => {
   res.status(401).json({ message: `Invalid credentials. Use ${currentAdminUser} / ${currentAdminPass}` });
 });
 
-// -------------------------------------------------------------
-// OTP PHONE NUMBER PASSWORD RESET API (WITH SHANKAR's 6374428155)
-// -------------------------------------------------------------
+// Mobile OTP Verification Password Reset API
 app.post('/api/v1/admin/send-otp', (req, res) => {
   const { phone } = req.body;
   const cleanPhone = String(phone || '').replace(/\D/g, '');
@@ -239,7 +237,6 @@ app.post('/api/v1/admin/send-otp', (req, res) => {
     return res.status(400).json({ message: 'Unauthorized Phone Number. Only registered Merchant Owner phone can reset password.' });
   }
 
-  // Generate 4-digit verification code
   const generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
   activeOtpStore[registeredPhone] = generatedOtp;
 
@@ -254,8 +251,6 @@ app.post('/api/v1/admin/send-otp', (req, res) => {
 
 app.post('/api/v1/admin/verify-reset-otp', (req, res) => {
   const { phone, otp, newUsername, newPassword } = req.body;
-  const cleanPhone = String(phone || '').replace(/\D/g, '');
-
   if (!newUsername || !newPassword) {
     return res.status(400).json({ message: 'New Username and Password are required' });
   }
@@ -265,12 +260,9 @@ app.post('/api/v1/admin/verify-reset-otp', (req, res) => {
     return res.status(400).json({ message: 'Invalid OTP Verification Code' });
   }
 
-  // Update Credentials
   currentAdminUser = String(newUsername).trim();
   currentAdminPass = String(newPassword).trim();
   delete activeOtpStore[registeredPhone];
-
-  console.log(`✅ Merchant Credentials updated! New User: ${currentAdminUser}`);
 
   res.json({
     message: 'Merchant Credentials successfully updated via Mobile OTP verification!',
@@ -323,7 +315,23 @@ app.post('/api/v1/admin/products', async (req, res) => {
       );
     } catch(e) {}
 
-    res.json({ message: 'Product added successfully' });
+    res.json({ message: 'Product added successfully', product: newProd });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Admin DELETE Product / Remove Collection Endpoint
+app.delete('/api/v1/admin/products/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+    memoryProducts = memoryProducts.filter(p => String(p.id) !== String(productId) && p.uuid !== productId);
+
+    try {
+      await pool.query("UPDATE products SET status = 'archived' WHERE id = ? OR uuid = ?", [productId, productId]);
+    } catch(e) {}
+
+    res.json({ message: 'Product deleted from catalog successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
