@@ -124,8 +124,18 @@ async function initPgDatabase(pgPool) {
 }
 
 // -------------------------------------------------------------
-// PWA MANIFEST & SERVICE WORKER
+// PWA MANIFEST, SERVICE WORKER & EXPLICIT LOGO ROUTES
 // -------------------------------------------------------------
+app.get('/icons/logo.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'icons', 'logo.png'));
+});
+app.get('/icons/icon-192.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'icons', 'icon-192.png'));
+});
+app.get('/icons/icon-512.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'icons', 'icon-512.png'));
+});
+
 app.get('/manifest.json', (req, res) => {
   res.json({
     name: "TextileHub Erode - Digital Catalog & Job Tracker",
