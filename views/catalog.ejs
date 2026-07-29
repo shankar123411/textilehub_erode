@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TextileHub Erode - Enterprise Textile & Garment Portal</title>
     <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/icons/logo.png">
     <meta name="theme-color" content="#08080a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,8 +38,9 @@
 
         /* HEADER NAV */
         .header { background: rgba(18, 18, 22, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 1.1rem 2.25rem; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .logo { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.6rem; text-decoration: none; letter-spacing: 1px; }
+        .logo { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.75rem; text-decoration: none; letter-spacing: 1px; }
         .logo span { color: var(--gold); }
+        .logo-img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--gold); box-shadow: 0 0 15px var(--gold-glow); object-fit: cover; }
 
         .header-actions { display: flex; align-items: center; gap: 1rem; }
 
@@ -60,10 +62,11 @@
         .page-view.active { display: block; }
 
         /* HERO & FILTER */
-        .hero { text-align: center; padding: 3rem 1.5rem 1.5rem; max-width: 850px; margin: 0 auto; }
+        .hero { text-align: center; padding: 3rem 1.5rem 1.5rem; max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+        .hero-logo-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--gold); box-shadow: 0 0 25px var(--gold-glow); }
         .hero h1 { font-size: 2.7rem; font-weight: 700; color: #ffffff; line-height: 1.15; }
         .hero h1 span { color: var(--gold); }
-        .hero p { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.6rem; }
+        .hero p { color: var(--text-muted); font-size: 0.95rem; }
 
         .categories { display: flex; justify-content: center; gap: 0.6rem; overflow-x: auto; padding: 1rem 1.5rem; scrollbar-width: none; flex-wrap: wrap; }
         .cat-chip { background: #121216; border: 1px solid var(--border); color: var(--text-muted); padding: 0.6rem 1.4rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
@@ -169,10 +172,11 @@
         <button class="btn-install" id="installBtn">Install App</button>
     </div>
 
-    <!-- MAIN HEADER NAV WITH DYNAMIC LANGUAGE TOGGLE -->
+    <!-- MAIN HEADER NAV WITH ERODE KAALA MAADU BULL LOGO -->
     <div class="header">
         <a href="#" class="logo" onclick="switchTab('catalogView')">
-            TEXTILEHUB <span id="logoCity">ERODE</span>
+            <img src="/icons/logo.png" alt="Erode Bull Logo" class="logo-img">
+            <span>TEXTILEHUB</span> <span id="logoCity">ERODE</span>
         </a>
 
         <div class="header-actions">
@@ -203,6 +207,7 @@
     <!-- PAGE 1: DIGITAL CATALOG VIEW -->
     <div class="page-view active" id="catalogView">
         <div class="hero">
+            <img src="/icons/logo.png" alt="Erode Kaala Maadu Emblem" class="hero-logo-img">
             <h1 id="heroTitle">TEXTILEHUB <span>ERODE</span></h1>
             <p id="heroSubtitle">Erode Wholesale Soft Silk Sarees, Shirtings, Nighties & Custom Garment Stitching</p>
         </div>
@@ -1336,7 +1341,6 @@
 
             if (!res.ok) throw new Error('Failed to delete product');
 
-            // Remove card from catalog and row from table without reloading!
             const cardEl = document.getElementById(`card-${productId}`);
             const rowEl = document.getElementById(`admin-prod-row-${productId}`);
 
